@@ -2,9 +2,9 @@
 
 ### Shrink URLs to a 6-digit code or choose your custom words
 
-TODO List
+**TODO List**
 
-- [] Complete this README
-- [] Move to MongoDB atlas
-- [] Deploy this
+- [ ] Complete this README
+- [ ] Move to MongoDB atlas
+- [ ] Deploy this
 
