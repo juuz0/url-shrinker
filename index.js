@@ -3,10 +3,20 @@ const app = express()
 const port = process.env.port || 3000;
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const shrinkobj = require('./models/shrinkSchema')
 const {nanoid} = require('nanoid')
 
-mongoose.connect('mongodb://localhost/shrinkDB', { useNewUrlParser: true })
+const mongoPass = process.env.mongo_pass
+
+ mongoose.connect(
+    `mongodb://juuz0:${mongoPass}@cluster0-shard-00-00.443eu.mongodb.net:27017,cluster0-shard-00-01.443eu.mongodb.net:27017,cluster0-shard-00-02.443eu.mongodb.net:27017/shrinkDB?ssl=true&replicaSet=atlas-h0jl7s-shard-0&authSource=admin&retryWrites=true&w=majority`,
+     { useNewUrlParser: true }).then(() =>  {
+         app.listen(port, () => console.log('Up! :D'))
+        }).catch((e) => {
+            console.log(e)
+        })
+
+
+const shrinkobj = require('./models/shrinkSchema')
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({
     extended: true
@@ -64,4 +74,3 @@ app.get('/:kek', async (req, res) => {
 })
 
 
-app.listen(port, () => console.log('Up! :D'))
