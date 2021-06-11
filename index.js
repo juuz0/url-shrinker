@@ -3,8 +3,11 @@ const app = express()
 const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
-const {nanoid} = require('nanoid')
-
+const homeHandler = require('./handlers/home')
+const apiCreateHandler = require('./handlers/api_create')
+const linkHandler  = require('./handlers/link_handler')
+const generateHandler = require('./handlers/generate')
+const shrinkobj = require('./models/shrinkSchema');
 const mongoPass = process.env.mongo_pass
 
  mongoose.connect(
@@ -16,7 +19,7 @@ const mongoPass = process.env.mongo_pass
         })
 
 
-const shrinkobj = require('./models/shrinkSchema')
+
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({
     extended: true
@@ -25,52 +28,12 @@ app.use(bodyParser.urlencoded({
 
 app.set('view engine', 'ejs')
 
-app.get('/', (req, res) => {
-    let url = req.query.url
-    let status = req.query.status
-    if(status==0){ let msg = req.query.msg
-    res.render('index', {
-        url:url,
-        status:status,
-        msg:msg
-    })
-    }
-    else if(status==1){
-        res.render('index', {
-            url:url,
-            status:status
-        })
-    }
-    else{
-    res.render('index', {
-        url: '',
-        status: 2
-    })
-}
-})
-app.post('/generate', async (req, res) => {
-    let url = req.body.custom
-    if (url == "") {
-        url = nanoid(6)
-    }
-    if (await shrinkobj.findOne({ 'generatedUrl': url })) {
-        res.redirect('/?url='+url+'&status=0&msg=The custom URL is already in use! Please use a new one or wait for it to expire.')
-    }
-    else {
-        await shrinkobj.create({
-            mainUrl: req.body.mainUrl,
-            generatedUrl: url
-        })
-        res.redirect('/?url='+url+'&status=1')
-    }
-})
-app.get('/:kek', async (req, res) => {
-    const urlObj = await shrinkobj.findOne({ 'generatedUrl': req.params.kek })
-    if (urlObj) res.redirect(urlObj.mainUrl)
-    else {
-        res.status(404);
-        res.render('404');
-    }
-})
+app.get('/', (req,res) => homeHandler(req,res))
+
+app.post('/generate', (req,res) => generateHandler(req,res,shrinkobj))
+
+app.get('/api/create', (req,res) => apiCreateHandler(req,res,shrinkobj))
+
+app.get('/:kek', (req, res) => linkHandler(req,res,shrinkobj))
 
 
