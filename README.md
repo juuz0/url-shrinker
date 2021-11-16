@@ -15,3 +15,15 @@ Ejs as a templating engine.
 - [x] Deploy this
 
 
+**ENV Setup to test locally**
+
+create ".env" file in root
+
+template :
+```
+MONGO_URI=mongodb://localhost:27017/url_shrinker
+PORT=5000
+```
+execute "npm run local"
+
+NOTE: needs heroku cli to be installed
